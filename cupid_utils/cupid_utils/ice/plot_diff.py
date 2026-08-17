@@ -40,7 +40,7 @@ def plot_diff(
         cmap = mpl.colormaps["ocean"]
         norm = mpl.colors.BoundaryNorm(levels, ncolors=cmap.N)
 
-    # set up the figure with a North Polar Stereographic projection
+    # set up the figure with a Polar Stereographic projection
     fig = plt.figure(tight_layout=True)
     gs = GridSpec(2, 4)
 
@@ -140,12 +140,122 @@ def plot_diff(
         TLON.values,
         TLAT.values,
         field_diff,
-        vmin=-2.0 * field_std,
-        vmax=2.0 * field_std,
+        vmin=-4.0 * field_std,
+        vmax=4.0 * field_std,
         cmap="coolwarm",
         transform=ccrs.PlateCarree(),
     )
     plt.colorbar(this, orientation="vertical", fraction=0.04, pad=0.01)
     plt.title(case2 + "-" + case1, fontsize=10)
 
-    plt.suptitle(title)
+    plt.suptitle("Max " + title)
+
+    # set up the figure with a Polar Stereographic projection
+    fig = plt.figure(tight_layout=True)
+    gs = GridSpec(2, 4)
+
+    if proj == "N":
+        ax = fig.add_subplot(gs[0, :2], projection=ccrs.NorthPolarStereo())
+        # sets the latitude / longitude boundaries of the plot
+        ax.set_extent([0.005, 360, 90, 45], crs=ccrs.PlateCarree())
+        ifrac_obs = ds_obs.ice_cov_prediddle.isel(month=9)
+        field1_tmp2 = field1.sel(time=(field1.time.dt.month == 9)).mean(dim="time")
+        field2_tmp2 = field2.sel(time=(field2.time.dt.month == 9)).mean(dim="time")
+        mask1 = mask1_in.sel(time=(field2.time.dt.month == 9)).mean(dim="time")
+        mask2 = mask2_in.sel(time=(field2.time.dt.month == 9)).mean(dim="time")
+    if proj == "S":
+        ax = fig.add_subplot(gs[0, :2], projection=ccrs.SouthPolarStereo())
+        # sets the latitude / longitude boundaries of the plot
+        ax.set_extent([0.005, 360, -90, -45], crs=ccrs.PlateCarree())
+        ifrac_obs = ds_obs.ice_cov_prediddle.isel(month=2)
+        field1_tmp2 = field1.sel(time=(field1.time.dt.month == 2)).mean(dim="time")
+        field2_tmp2 = field2.sel(time=(field2.time.dt.month == 2)).mean(dim="time")
+        mask1 = mask1_in.sel(time=(field2.time.dt.month == 2)).mean(dim="time")
+        mask2 = mask2_in.sel(time=(field2.time.dt.month == 2)).mean(dim="time")
+
+    field1_tmp = np.where(mask1 > 0.01, field1_tmp2, np.nan)
+    field2_tmp = np.where(mask2 > 0.01, field2_tmp2, np.nan)
+
+    ax.set_boundary(circle, transform=ax.transAxes)
+    ax.add_feature(cfeature.LAND, zorder=100, edgecolor="k")
+
+    field_diff = field2_tmp2.values - field1_tmp2.values
+    field_std = np.nanstd(field_diff)
+
+    this = ax.pcolormesh(
+        TLON.values,
+        TLAT.values,
+        field1_tmp,
+        norm=norm,
+        cmap="ocean",
+        transform=ccrs.PlateCarree(),
+    )
+    if aice > 0:
+        plt.contour(
+            ds_obs.lon.values,
+            ds_obs.lat.values,
+            ifrac_obs.values,
+            levels=[0.15],
+            colors="magenta",
+            transform=ccrs.PlateCarree(),
+        )
+    plt.colorbar(this, orientation="vertical", fraction=0.04, pad=0.01)
+    plt.title(case1, fontsize=10)
+
+    if proj == "N":
+        ax = fig.add_subplot(gs[0, 2:], projection=ccrs.NorthPolarStereo())
+        # sets the latitude / longitude boundaries of the plot
+        ax.set_extent([0.005, 360, 90, 45], crs=ccrs.PlateCarree())
+    if proj == "S":
+        ax = fig.add_subplot(gs[0, 2:], projection=ccrs.SouthPolarStereo())
+        # sets the latitude / longitude boundaries of the plot
+        ax.set_extent([0.005, 360, -90, -45], crs=ccrs.PlateCarree())
+
+    ax.set_boundary(circle, transform=ax.transAxes)
+    ax.add_feature(cfeature.LAND, zorder=100, edgecolor="k")
+
+    this = ax.pcolormesh(
+        TLON.values,
+        TLAT.values,
+        field2_tmp,
+        norm=norm,
+        cmap="ocean",
+        transform=ccrs.PlateCarree(),
+    )
+    if aice > 0:
+        plt.contour(
+            ds_obs.lon.values,
+            ds_obs.lat.values,
+            ifrac_obs.values,
+            levels=[0.15],
+            colors="magenta",
+            transform=ccrs.PlateCarree(),
+        )
+    plt.colorbar(this, orientation="vertical", fraction=0.04, pad=0.01)
+    plt.title(case2, fontsize=10)
+
+    if proj == "N":
+        ax = fig.add_subplot(gs[1, 1:3], projection=ccrs.NorthPolarStereo())
+        # sets the latitude / longitude boundaries of the plot
+        ax.set_extent([0.005, 360, 90, 45], crs=ccrs.PlateCarree())
+    if proj == "S":
+        ax = fig.add_subplot(gs[1, 1:3], projection=ccrs.SouthPolarStereo())
+        # sets the latitude / longitude boundaries of the plot
+        ax.set_extent([0.005, 360, -90, -45], crs=ccrs.PlateCarree())
+
+    ax.set_boundary(circle, transform=ax.transAxes)
+    ax.add_feature(cfeature.LAND, zorder=100, edgecolor="k")
+
+    this = ax.pcolormesh(
+        TLON.values,
+        TLAT.values,
+        field_diff,
+        vmin=-4.0 * field_std,
+        vmax=4.0 * field_std,
+        cmap="coolwarm",
+        transform=ccrs.PlateCarree(),
+    )
+    plt.colorbar(this, orientation="vertical", fraction=0.04, pad=0.01)
+    plt.title(case2 + "-" + case1, fontsize=10)
+
+    plt.suptitle("Min " + title)
