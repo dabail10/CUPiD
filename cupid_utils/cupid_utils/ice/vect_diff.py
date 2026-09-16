@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+import matplotlib as mpl
 import matplotlib.path as mpath
 import matplotlib.pyplot as plt
 import numpy as np
@@ -58,10 +59,12 @@ def vect_diff(
         ax = fig.add_subplot(gs[0, :2], projection=ccrs.NorthPolarStereo())
         # sets the latitude / longitude boundaries of the plot
         ax.set_extent([0.005, 360, 90, 45], crs=ccrs.PlateCarree())
+        title = "NH Velocity m/s"
     if proj == "S":
         ax = fig.add_subplot(gs[0, :2], projection=ccrs.SouthPolarStereo())
         # sets the latitude / longitude boundaries of the plot
         ax.set_extent([0.005, 360, -90, -45], crs=ccrs.PlateCarree())
+        title = "SH Velocity m/s"
 
     ax.set_boundary(circle, transform=ax.transAxes)
     ax.add_feature(cfeature.LAND, zorder=100, edgecolor="k")
@@ -73,12 +76,15 @@ def vect_diff(
     speed1_tmp = np.sqrt(uvel1 * uvel1 + vvel1 * vvel1)
     speed1 = np.where(mask1 > 0.01, speed1_tmp, np.nan)
 
+    cmap = mpl.colormaps["ocean"]
+    levels = mpl.ticker.MaxNLocator(nbins=10).tick_values(0.0, 0.2)
+    norm = mpl.colors.BoundaryNorm(levels, ncolors=cmap.N)
+
     this = ax.pcolormesh(
         TLON,
         TLAT,
         speed1,
-        vmin=0.0,
-        vmax=0.2,
+        norm=norm,
         cmap="ocean",
         transform=ccrs.PlateCarree(),
     )
@@ -94,18 +100,6 @@ def vect_diff(
         color="black",
         scale=1.0,
         transform=ccrs.PlateCarree(),
-    )
-    units = "cm/s"
-    ax.quiverkey(
-        Q,
-        0.85,
-        0.025,
-        0.10,
-        r"10 " + units,
-        labelpos="S",
-        coordinates="axes",
-        color="black",
-        zorder=2,
     )
 
     n = 0
@@ -156,8 +150,7 @@ def vect_diff(
             TLON,
             TLAT,
             speed2,
-            vmin=0.0,
-            vmax=0.2,
+            norm=norm,
             cmap="ocean",
             transform=ccrs.PlateCarree(),
         )
@@ -173,18 +166,19 @@ def vect_diff(
             scale=1.0,
             transform=ccrs.PlateCarree(),
         )
-        units = "cm/s"
-        ax.quiverkey(
-            Q,
-            0.85,
-            0.025,
-            0.10,
-            r"10 " + units,
-            labelpos="S",
-            coordinates="axes",
-            color="black",
-            zorder=2,
-        )
+
+    units = "cm/s"
+    ax.quiverkey(
+        Q,
+        0.85,
+        0.025,
+        0.10,
+        r"10 " + units,
+        labelpos="S",
+        coordinates="axes",
+        color="black",
+        zorder=2,
+    )
 
     pos = gs[0, n + 2].get_position(fig)
     shrink_h, shrink_w = 0.8, 0.4
@@ -193,7 +187,7 @@ def vect_diff(
     cbar_ax = fig.add_axes(
         [
             pos.x0,
-            pos.y0,
+            pos.y0 + new_height / 4,
             new_width,
             new_height,
         ],
@@ -255,12 +249,15 @@ def vect_diff(
         vvel_diff = vvel_rot2 - vvel_rot1
         speed_diff = speed2 - speed1
 
+        cmap = mpl.colormaps["coolwarm"]
+        diff_levels = mpl.ticker.MaxNLocator(nbins=10).tick_values(-0.2, 0.2)
+        norm = mpl.colors.BoundaryNorm(diff_levels, ncolors=cmap.N)
+
         this = ax.pcolormesh(
             TLON,
             TLAT,
             speed_diff,
-            vmin=-0.02,
-            vmax=0.02,
+            norm=norm,
             cmap="coolwarm",
             transform=ccrs.PlateCarree(),
         )
@@ -276,31 +273,32 @@ def vect_diff(
             scale=0.2,
             transform=ccrs.PlateCarree(),
         )
-        units = "cm/s"
-        ax.quiverkey(
-            Q,
-            0.85,
-            0.025,
-            0.05,
-            r"5 " + units,
-            labelpos="S",
-            coordinates="axes",
-            color="black",
-            zorder=2,
-        )
 
-    pos = gs[1, n + 2].get_position(fig)
+    units = "cm/s"
+    ax.quiverkey(
+        Q,
+        0.85,
+        0.025,
+        0.05,
+        r"5 " + units,
+        labelpos="S",
+        coordinates="axes",
+        color="black",
+        zorder=2,
+    )
+
+    pos = gs[1, n + 1].get_position(fig)
     shrink_h, shrink_w = 0.8, 0.4
     new_height = pos.height * shrink_h
     new_width = pos.width * shrink_w
     cbar_ax = fig.add_axes(
         [
             pos.x0,
-            pos.y0,
+            pos.y0 + new_height / 4,
             new_width,
             new_height,
         ],
     )
     plt.colorbar(this, orientation="vertical", cax=cbar_ax)
 
-    plt.suptitle("Velocity m/s")
+    plt.suptitle(title)
