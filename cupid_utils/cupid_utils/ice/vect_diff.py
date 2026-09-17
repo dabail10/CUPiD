@@ -245,9 +245,9 @@ def vect_diff(
         speed2_tmp = np.sqrt(uvel2 * uvel2 + vvel2 * vvel2)
         speed2 = np.where(mask2 > 0.01, speed2_tmp, np.nan)
 
-        uvel_diff = uvel_rot2 - uvel_rot1
-        vvel_diff = vvel_rot2 - vvel_rot1
-        speed_diff = speed2 - speed1
+        uvel_diff = uvel_rot1 - uvel_rot2
+        vvel_diff = vvel_rot1 - vvel_rot2
+        speed_diff = speed1 - speed2
 
         cmap = mpl.colormaps["coolwarm"]
         diff_levels = mpl.ticker.MaxNLocator(nbins=10).tick_values(-0.2, 0.2)
@@ -261,7 +261,7 @@ def vect_diff(
             cmap="coolwarm",
             transform=ccrs.PlateCarree(),
         )
-        plt.title(case_nickname + "-" + ref_case_nickname, fontsize=10)
+        plt.title(ref_case_nickname + "-" + case_nickname, fontsize=10)
 
         # add vectors
         Q = ax.quiver(

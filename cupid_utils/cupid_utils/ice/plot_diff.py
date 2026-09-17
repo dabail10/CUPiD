@@ -202,7 +202,7 @@ def plot_diff(
         ax.set_boundary(circle, transform=ax.transAxes)
         ax.add_feature(cfeature.LAND, zorder=100, edgecolor="k")
 
-        field_diff = field2_tmp2.values - field1_tmp2.values
+        field_diff = field1_tmp2.values - field2_tmp2.values
         field_std = np.nanstd(field_diff)
 
         cmap = mpl.colormaps["coolwarm"]
@@ -221,7 +221,7 @@ def plot_diff(
             transform=ccrs.PlateCarree(),
         )
 
-        plt.title(case_nickname + "-" + ref_case_nickname, fontsize=10)
+        plt.title(ref_case_nickname + "-" + case_nickname, fontsize=10)
 
     pos = gs[1, n + 1].get_position(fig)
     shrink_h, shrink_w = 0.8, 0.4
