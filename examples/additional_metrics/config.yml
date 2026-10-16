@@ -182,6 +182,12 @@ compute_notebooks:
               - 1850pSASU
 
     ice:
+      seaice_metrics:
+        parameter_groups:
+          none:
+            climo_nyears: 35
+            grid_file: '/glade/campaign/cesm/community/omwg/grids/tx2_3v2_grid.nc'
+            path_model: '/glade/campaign/cesm/development/cross-wg/diagnostic_framework/CUPiD_model_data/ice/'
       Hemis_seaice_visual_compare_obs_lens:
         parameter_groups:
           none:
@@ -227,6 +233,7 @@ book_toc:
 
     - caption: Sea Ice
       chapters:
+        - file: ice/seaice_metrics
         - file: ice/Hemis_seaice_visual_compare_obs_lens
         - file: ice/Hemis_seaice_visual_compare_contour
 
