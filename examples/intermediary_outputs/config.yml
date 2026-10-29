@@ -44,44 +44,27 @@ global_params: # TODO: a lot of these params may be irrelevant/misleading for th
   case_names:
     - 'b.e30_alpha09e_m.B1850C_MTso_Gris_Marbl.ne30_t233_wgx3.397'
     - 'b.e30_alpha09e_m.B1850C_MTso_Gris_Marbl.ne30_t233_wgx3.396'
-    - 'b.e30_alpha10c.B1850C_MTso.ne30_t233_wgx3.402'
-    - 'b.e30_alpha11b.B1850C_MTt4s.ne30_t233_wgx3.406'
   case_nicknames:
     - '397'
     - '396'
-    - '402'
-    - '406t4s'
-  CESM_output_dir: ['/glade/derecho/scratch/hannay/archive',
-                    '/glade/derecho/scratch/hannay/archive',
-                    '/glade/derecho/scratch/hannay/archive',
-                    '/glade/derecho/scratch/tilmes/archive']
+  CESM_output_dir: '/glade/campaign/cesm/development/cross-wg/diagnostic_framework/CESM_output_for_testing'
   start_dates:
-    - '0001-01-01'
-    - '0001-01-01'
     - '0001-01-01'
     - '0001-01-01'
   end_dates:
     - '0154-01-01'
     - '0201-01-01'
-    - '0173-01-01'
-    - '0025-01-01'
   climo_start_years:
     - 119
     - 165
-    - 138
-    - 1
   climo_end_years:
     - 154
     - 200
-    - 172
-    - 24
   case_align_years:
     - 0
     - 0
-    - 93
-    - 230
   obs_data_dir: '/glade/campaign/cesm/development/cross-wg/diagnostic_framework/CUPiD_obs_data'
-  ts_dir: '/glade/campaign/cesm/development/cross-wg/diagnostic_framework/CESM_output_for_testing' # If this is set to null, it will default to CESM_output_dir; if you don't have permissions to write to CESM_output_dir, you can specify a directory such as your scratch arcive directory
+  ts_dir: '/glade/campaign/cesm/development/cross-wg/diagnostic_framework/CESM_timeseries_from_testing' # If this is set to null, it will default to CESM_output_dir; if you don't have permissions to write to CESM_output_dir, you can specify a directory such as your scratch arcive directory
   lc_kwargs:
     threads_per_worker: 1
 
@@ -99,56 +82,56 @@ timeseries: # TODO: will need to update timeseries portion of this in next PR
     derive_vars:
         RESTOM: ['FLNT','FSNT']
     hist_str: 'cam.h0a'
-    start_years: [1,1,1,1]
-    end_years: [200,200,200,200]
-    slice_size: [10,10,10,10]
+    start_years: 1
+    end_years: 200
+    slice_size: 10
     level: 'lev'
-    mapping_file: [Null, Null, Null, Null]
+    mapping_file: Null
 
 
   lnd:
     vars: []
     derive_vars: []
     hist_str: 'clm2.h0a'
-    start_years: [1,1,1,1]
-    end_years: [200,200,200,200]
-    slice_size: [10,10,10,10]
+    start_years: 1
+    end_years: 200
+    slice_size: 10
     level: 'lev'
 
   ocn:
     vars: []
     derive_vars: []
     hist_str: 'h.z'
-    start_years: [1,1,1,1]
-    end_years: [200,200,200,200]
-    slice_size: [10,10,10,10]
+    start_years: 1
+    end_years: 200
+    slice_size: 10
     level: 'lev'
 
   ice:
     vars: ['aice','hi','hs']
     derive_vars: []
     hist_str: 'cice.h'
-    start_years: [1,1,1,1]
-    end_years: [200,200,200,200]
-    slice_size: [10,10,10,10]
+    start_years: 1
+    end_years: 200
+    slice_size: 10
     level: 'lev'
 
   glc:
     vars: []
     derive_vars: []
     hist_str: 'initial_hist'
-    start_years: [1,1,1,1]
-    end_years: [200,200,200,200]
-    slice_size: [10,10,10,10]
+    start_years: 1
+    end_years: 200
+    slice_size: 1
     level: 'lev'
 
   rof:
     vars: []
     derive_vars: []
     hist_str: 'h0'
-    start_years: [1,1,1,1]
-    end_years: [200,200,200,200]
-    slice_size: [10,10,10,10]
+    start_years: 1
+    end_years: 200
+    slice_size: 10
     level: 'lev'
 
 compute_notebooks:
@@ -172,8 +155,6 @@ compute_notebooks:
             regridded_output:
               - False
               - False
-              - False
-              - False
             vars:
               TS: Global
               RESTOM: Global
@@ -184,19 +165,19 @@ compute_notebooks:
         parameter_groups:
           none:
             climo_nyears: 35
-            grid_file: '/glade/campaign/cesm/community/omwg/grids/tx2_3v2_grid.nc'
+            grid_file: '/glade/campaign/cesm/community/omwg/grids/tx2_3v3_grid.nc'
             path_model: '/glade/campaign/cesm/development/cross-wg/diagnostic_framework/CUPiD_model_data/ice/'
       Hemis_seaice_visual_compare_obs_lens_small:
         parameter_groups:
           none:
             climo_nyears: 35
-            grid_file: '/glade/campaign/cesm/community/omwg/grids/tx2_3v2_grid.nc'
+            grid_file: '/glade/campaign/cesm/community/omwg/grids/tx2_3v3_grid.nc'
             path_model: '/glade/campaign/cesm/development/cross-wg/diagnostic_framework/CUPiD_model_data/ice/'
       Regional_seaice_visual_compare_obs_lens:
         parameter_groups:
           none:
             climo_nyears: 35
-            grid_file: '/glade/campaign/cesm/community/omwg/grids/tx2_3v2_grid.nc'
+            grid_file: '/glade/campaign/cesm/community/omwg/grids/tx2_3v3_grid.nc'
             path_model: '/glade/campaign/cesm/development/cross-wg/diagnostic_framework/CUPiD_model_data/ice/'
 
 ########### JUPYTER BOOK CONFIG ###########
