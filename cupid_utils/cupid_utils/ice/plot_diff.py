@@ -202,6 +202,8 @@ def plot_diff(
         ax.set_boundary(circle, transform=ax.transAxes)
         ax.add_feature(cfeature.LAND, zorder=100, edgecolor="k")
 
+        if field1_tmp2.name != field2_tmp2.name:
+            print(f"{field1_tmp2.name}, {field2_tmp2.name}")
         field_diff = field1_tmp2.values - field2_tmp2.values
         field_std = np.nanstd(field_diff)
 
